@@ -5,9 +5,9 @@
 #include <QTabWidget>
 #include "dataframe.h"
 
-void MainWindow::loadXMLData()
+void MainWindow::loadXMLData(const QString &fileName)
 {
-    XMLReader reader("/home/libor/qt_projects/JPMeteo/JPMeteo/example.xml");
+    XMLReader reader(fileName);
     foreach (MeasuredData data, reader.getData()) {
         ui->tabWidget->addTab(new DataFrame(data),data.name);
     }
@@ -21,10 +21,17 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    loadXMLData();
+    ui->lineEdit->setText(settings.value("DataFile",QString("/home/libor/qt_projects/JPMeteo/JPMeteo/example.xml")).toString());
+    loadXMLData(settings.value("DataFile").toString());
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::on_pushButton_clicked()
+{
+    loadXMLData(ui->lineEdit->text());
+    settings.setValue("DataFile",ui->lineEdit->text());
 }
