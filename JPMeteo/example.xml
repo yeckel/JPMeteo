@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data>
+<senzor>
+ <id>0</id>
+ <poloha>Amigarium</poloha>
+ <teplota> </teplota>
+ <teplota2> </teplota2>
+ <vlhkost> </vlhkost>
+ <tlak> </tlak>
+ <rychlost> </rychlost>
+ <pocitove> </pocitove>
+</senzor>
+<senzor>
+ <id>1</id>
+ <poloha>Stáj</poloha>
+ <teplota>1</teplota>
+ <teplota2>2</teplota2>
+ <vlhkost>3</vlhkost>
+ <tlak>4</tlak>
+ <rychlost>5</rychlost>
+ <pocitove>6</pocitove>
+ </senzor>
+</data>
