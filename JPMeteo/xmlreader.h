@@ -1,6 +1,7 @@
 #ifndef XMLREADER_H
 #define XMLREADER_H
 #include <QtXml>
+#include <QNetworkReply>
 
 struct MeasuredData{
     int id;
@@ -13,15 +14,21 @@ struct MeasuredData{
     QString perceptedTemperature;
 };
 
-class XMLReader
+class XMLReader: public QObject
 {
+    Q_OBJECT
 public:
-    XMLReader(const QString &fileName);
+    XMLReader();
     QStringList getSenzorList();
     QVector<MeasuredData> getData();
     QString extractElementValue(const QDomElement &elem, const QString elemName);
+    void loadFile(const QString &fileUrl);
+private slots:
+    void fileIsReady(QNetworkReply *reply);
 private:
     QDomElement root;
+signals:
+    void xmlReady();
 };
 
 #endif // XMLREADER_H

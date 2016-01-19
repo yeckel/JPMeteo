@@ -1,19 +1,12 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "xmlreader.h"
 #include <QDebug>
 #include <QTabWidget>
 #include "dataframe.h"
 
 void MainWindow::loadXMLData(const QString &fileName)
 {
-    XMLReader reader(fileName);
-    foreach (MeasuredData data, reader.getData()) {
-        ui->tabWidget->addTab(new DataFrame(data),data.name);
-    }
-    for (int i  = 0; i < ui->tabWidget->count(); i++){
-        ui->tabWidget->removeTab(0);
-    }
+    reader.loadFile(fileName);
 }
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -21,7 +14,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    ui->lineEdit->setText(settings.value("DataFile",QString("/home/libor/qt_projects/JPMeteo/JPMeteo/example.xml")).toString());
+    ui->lineEdit->setText(settings.value("DataFile",QString("http://tomsik.eu/sites/tomsik.eu/files/example.xml")).toString());
+    connect(&reader,SIGNAL(xmlReady()),this,SLOT(on_DataReady()));
     loadXMLData(settings.value("DataFile").toString());
 }
 
@@ -34,4 +28,12 @@ void MainWindow::on_pushButton_clicked()
 {
     loadXMLData(ui->lineEdit->text());
     settings.setValue("DataFile",ui->lineEdit->text());
+}
+
+void MainWindow::on_DataReady()
+{
+    ui->tabWidget->clear();
+    foreach (MeasuredData data, reader.getData()) {
+        ui->tabWidget->addTab(new DataFrame(data),data.name);
+    }
 }

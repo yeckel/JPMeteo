@@ -1,19 +1,25 @@
 #include "xmlreader.h"
 #include <QDebug>
 #include <QtXml>
+#include <QNetworkAccessManager>
 
-XMLReader::XMLReader(const QString &fileName)
+XMLReader::XMLReader()
 {
-    QFile f(fileName);
-    if (!f.open(QIODevice::ReadOnly )){
-        // Error while loading file
-        qDebug() << "Error while loading file";
-        return;
-    }
+}
+
+void XMLReader::fileIsReady(QNetworkReply *reply){
+    QByteArray data = reply->readAll();
+    qDebug() << "XML download size:" << data.size() << "bytes";
+    qDebug() << QString::fromUtf8(data);
+
     QDomDocument xmlDoc;
-    xmlDoc.setContent(&f);
-    f.close();
+
+    if(!xmlDoc.setContent(data))
+    {
+        qWarning() << "Failed to parse XML";
+    }
     root = xmlDoc.documentElement();
+    emit xmlReady();
 }
 
 QStringList XMLReader::getSenzorList()
@@ -36,6 +42,13 @@ QString XMLReader::extractElementValue(const QDomElement &elem, const QString el
     if (elemsPoloha.length() != 1)
         return QStringLiteral("Invalid");
     return elemsPoloha.at(0).toElement().text();
+}
+
+void XMLReader::loadFile(const QString &fileUrl)
+{
+    QNetworkAccessManager *manager = new QNetworkAccessManager(this);
+    connect(manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(fileIsReady(QNetworkReply*)) );
+    manager->get(QNetworkRequest(QUrl(fileUrl)));
 }
 
 QVector<MeasuredData> XMLReader::getData()

@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QSettings>
+#include "xmlreader.h"
 
 namespace Ui {
 class MainWindow;
@@ -19,10 +20,11 @@ public:
     void loadXMLData(const QString &fileName);
 private slots:
     void on_pushButton_clicked();
-
+    void on_DataReady();
 private:
     Ui::MainWindow *ui;
     QSettings settings;
+    XMLReader reader;
 };
 
 #endif // MAINWINDOW_H
